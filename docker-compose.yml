@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+    command: air ./cmd/main.go -b 0.0.0.0:8080
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+
+networks:
+  default:
+    name: go-sanjibook
+
+volumes:
+  postgres:

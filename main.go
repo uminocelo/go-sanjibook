@@ -1,16 +1,39 @@
 package main
 
 import (
-  "net/http"
-  "github.com/gin-gonic/gin"
+	"log"
+	"net/http"
+	"os"
+	"sanjibook/database"
+
+	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 )
 
 func main() {
-  r := gin.Default()
+	loadEnv()
+	loadDb()
+	loadRoutes()
+}
 
-  r.GET("/", func(c *gin.Context) {
-    c.JSON(http.StatusOK, gin.H{"data": "hello world"})    
-  })
+func loadEnv() {
+	err := godotenv.Load(".env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+		os.Exit(2)
+	}
+}
 
-  r.Run()
+func loadDb() {
+	database.Connect()
+}
+
+func loadRoutes() {
+	r := gin.Default()
+
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{"data": "hello world"})
+	})
+
+	r.Run(":3000")
 }
